@@ -3,12 +3,12 @@
 # python 
 __pycache__
 venv/
+.vscode
 
 # git
 .gitignore
-README.md
+**/*.md
 
 
 # for the project, not sure yet
-**/*keys.py
 **/*.db

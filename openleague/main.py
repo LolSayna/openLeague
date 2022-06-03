@@ -1,9 +1,15 @@
 import requests
+import logging
+from discordBot import runBot
+from cred import discord_bot_token
 
-print("Test the docker and requests")
-
+# logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.info("Starting container")
 
 r = requests.get('https://httpbin.org/basic-auth/user/pass', auth=('user', 'pass'))
-print(r.status_code)
+if r.status_code != 200:
+    logging.debug("Requests check failed")
 
-print("could run another file.")
+
+runBot(token=discord_bot_token)

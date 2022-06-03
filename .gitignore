@@ -3,7 +3,8 @@
 # python specific
 __pycache__/
 venv/
+.vscode
 
 # for the project
-**/*keys.py
-*.db
+**/*cred.py
+**/*.db
