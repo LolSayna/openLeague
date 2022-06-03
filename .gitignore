@@ -5,5 +5,5 @@ __pycache__/
 venv/
 
 # for the project
-keys.py
+**/*keys.py
 *.db

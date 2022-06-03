@@ -10,5 +10,5 @@ README.md
 
 
 # for the project, not sure yet
-src/keys.py
+**/*keys.py
 **/*.db

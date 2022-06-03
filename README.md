@@ -23,6 +23,9 @@ Data output:
 Other TODO:
 - how to handel api keys and credentials
 - python packaging? with __init__.py and main functions, not sure yet how
+- pytests & docs. How to do pytest with multi-stage or how
+
+- Docker: healtcheck? together with other debuging
 
 # Workflow
 Github via UI
