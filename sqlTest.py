@@ -15,5 +15,16 @@ c.execute("""CREATE TABLE tournament (
 #c.execute("INSERT INTO tournament")
 
 
+def insertTabele():
+    pass
+
+def insertElement(table, elemnt):
+    pass
+
+def extractElement(which):
+    pass
+
+
+
 con.commit()
 con.close()
