@@ -22,6 +22,7 @@ Data output:
 
 Other TODO:
 - how to handel api keys and credentials
+- python packaging? with __init__.py and main functions, not sure yet how
 
 # Workflow
 Github via UI
@@ -32,3 +33,5 @@ Github via UI
 Docker Testing:
 - docker build -t open_league .
 - docker run open_league
+Debugging:
+- docker run -it open_league /bin/bash
