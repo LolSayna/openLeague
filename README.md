@@ -23,5 +23,8 @@ Data output:
 Other TODO:
 - how to handel api keys and credentials
 
-# ueberschrift
-text
+# Workflow
+Github via UI
+- stage
+- commit
+- push

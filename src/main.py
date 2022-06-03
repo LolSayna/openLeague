@@ -1,6 +1,6 @@
 import requests
 
-print("Test the aaaaaaaaaabot")
+print("Test the docker and requests")
 
 
 r = requests.get('https://httpbin.org/basic-auth/user/pass', auth=('user', 'pass'))
