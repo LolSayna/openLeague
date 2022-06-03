@@ -10,5 +10,9 @@ COPY . /app
 # install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# adding non-root for security
+RUN adduser loluser
+USER loluser
+
 # run the main file
-CMD ["python3", "src/main.py"]
+CMD ["python3", "openleague/main.py"]
