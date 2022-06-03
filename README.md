@@ -17,12 +17,11 @@ Data processing:
 
 Data output:
 - simple CLI
-- Discord bot WIP
+- Discord bot
 - web applicantion ?WIP?
 
 Other TODO:
 - including cred in dockerfile?, for now yes-> means container cant be shared and must be rebuild
-- python packaging? with __init__.py and main functions, not sure yet how
 - pytests & docs. How to do pytest with multi-stage or how
 
 - Docker: healtcheck? together with other debuging

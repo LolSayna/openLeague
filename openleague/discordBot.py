@@ -1,37 +1,33 @@
 import discord
 import logging
 
+# Implementing the discord Client Class
 class myClient(discord.Client):
 
+    # debugging on startup
     async def on_ready(self):
-        logging.info(f"Bot online as: {self.user}")
+        logging.info(f"Bot online as: {self.user}, Id: {self.user.id}")
 
-    async def on_message(self,msg):
+    # replying to message and parsing them
+    async def on_message(self, msg):
         if msg.author != self.user:
-            logging.info(f"Author: {msg.author} Message: {msg.content}")
+            
+            logging.warning(f"Message: {msg.clean_content}, by: {msg.author}")
 
-            if msg.raw_mentions and msg.raw_mentions[0] == self.user.id:
-                await msg.channel.send(f"Bot answers")
+            if str(self.user.id) in msg.content:
+                cmd = msg.clean_content.split()
+                logging.warning(f"Parsing: {cmd}")
 
-                msg = msg.content
-                logging.info(msg)
-            else:
-                logging.info(f"not for bot")
+                if cmd[1] == "status":
+                    await msg.channel.send(f"Online")
+                
+                elif cmd[1] == "exe":
+                    await msg.channel.send(f"Execute Order 66!")
 
-
-
+        
+# to start the bot
 def runBot(token):
     # disable not important logging from the package
     logging.getLogger("discord").setLevel(logging.ERROR)
 
-    # starting the client
     myClient().run(token)
-
-    
-# should remove
-if __name__ == "__main__":
-
-    # getting the token for the local test
-    from cred import discord_bot_token
-
-    runbot(token=discord_bot_token)

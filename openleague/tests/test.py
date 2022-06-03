@@ -1,1 +1,1 @@
-print("all tests succsesfull")
+print("all tests succsesfull :)")
