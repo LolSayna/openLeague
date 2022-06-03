@@ -1,0 +1,14 @@
+# Used to exclude files from the final docker image
+
+# python 
+__pycache__
+venv/
+
+# git
+.gitignore
+README.md
+
+
+# for the project, not sure yet
+src/keys.py
+**/*.db
