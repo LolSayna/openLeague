@@ -26,5 +26,9 @@ Other TODO:
 # Workflow
 Github via UI
 - stage
-- commit
+- commit + message
 - push
+
+Docker Testing:
+- docker build -t open_league .
+- docker run open_league
