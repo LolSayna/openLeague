@@ -16,17 +16,3 @@ def getPlayer(name):
         logging.error(f"Lolpros api request failed")
         return None
 
-def parsePlayer(dict):
-    if dict is None:
-        return None, None
-    names, elo = [], []
-    for account in dict["league_player"]["accounts"]:
-        names.append(account["summoner_name"])
-        elo.append(account["rank"]["league_points"])
-    
-    return names, elo
-
-
-def parsing(name):
-
-    return parsePlayer(getPlayer(name))

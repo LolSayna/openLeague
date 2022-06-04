@@ -21,7 +21,7 @@ Data output:
 - web applicantion ?WIP?
 
 Other TODO:
-- including cred in dockerfile?, for now yes-> means container cant be shared and must be rebuild
+- including cred in dockerfile?, for now yes-> means container cant be shared and must be rebuild -> volumes
 - pytests & docs. How to do pytest with multi-stage or how
 
 - Docker: healtcheck? together with other debuging

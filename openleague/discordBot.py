@@ -1,6 +1,6 @@
 import discord
 import logging
-from lolpros import parsing
+from interpreter import parse_Cmd
 
 # Implementing the discord Client Class
 class myClient(discord.Client):
@@ -25,17 +25,15 @@ class myClient(discord.Client):
                 elif cmd[1] == "exe":
                     await msg.channel.send(f"Execute Order 66!")
 
-                elif cmd[1] == "scout":
-                    names, elo = parsing(name=cmd[2])
-
-                    await msg.channel.send(f"Found: {names}\nElo: {elo}")
-
-                    
-
                 elif cmd[1] == "emb":
                     print("dsa")    
                     embed = discord.Embed(title="hallo", description="welt", url="https://euw.op.gg/summoner/userName=uffsayna")
                     await msg.channel.send(embed=embed)
+
+                else:
+                    await msg.channel.send(parse_Cmd(cmd))
+
+                    
     
 
 
