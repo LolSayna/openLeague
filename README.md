@@ -26,6 +26,18 @@ Other TODO:
 
 - Docker: healtcheck? together with other debuging
 
+Discord:
+- nice embeded output
+- fix async + await
+
+Command:
+- @bot scout https://euw.op.gg/multisearch/euw?summoners=uff%20sayna,%20sayna
+-> split into players
+    for each player accountname -> lolpros, leaguepdia, riot api
+    -> format favourite champs and info
+
+    -> outbut to bot
+
 # Workflow
 Github via UI
 - stage
