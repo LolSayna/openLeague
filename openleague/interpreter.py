@@ -2,7 +2,8 @@
 # cmd syntax:
 # [scout, NAMES OPTIONS]
 
-from lolpros import getPlayer
+import logging
+from lolpros import getPlayer, findPlayers
 
 def parse_Cmd(cmd):
 
@@ -11,6 +12,11 @@ def parse_Cmd(cmd):
         names, elo = scoutPlayer(name=cmd[2])
 
         return f"Found: {names}\nElo: {elo}"
+    
+    if cmd[1] == "op":
+        
+        l = convertOpgg(opgg=cmd[2])
+        return l
 
 
 
@@ -24,3 +30,30 @@ def scoutPlayer(name):
         elo.append(account["rank"]["league_points"])
     
     return names, elo
+
+
+def convertOpgg(opgg):
+
+    l = "Scouting Result:\n"
+    op = opgg.split("summoners=")[1]
+    
+    if ",%20" in op:
+        u = op.split(",%20")
+    elif "," in op:
+        u = op.split(",")
+    else:
+        u = op.split("%2C")
+
+    for player in u:
+
+        r = findPlayers(player)
+        if r:
+            playerName = r[0]["slug"]
+            accName, elo = scoutPlayer(playerName)
+
+            l += "**" + str(playerName) + "** " +str(accName)+str(elo)+"\n"
+        else:
+            l += "**" + str(player) + "** no account on lolpros\n"
+
+    # removing the finale newline
+    return l[:-1]

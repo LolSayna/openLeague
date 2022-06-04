@@ -38,6 +38,14 @@ Command:
 
     -> outbut to bot
 
+## lolpros
+- handling fan accounts with pro names inside
+- handling spaces+kommas -> sometimes uses %2C sometimes ,
+
+# Handeling space in URLs
+- lolpros api acepts space in url OR +, but needs them
+- op.gg cuts all spaces, + and %20 out
+
 # Workflow
 Github via UI
 - stage
