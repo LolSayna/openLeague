@@ -26,7 +26,6 @@ class myClient(discord.Client):
                     await msg.channel.send(f"Execute Order 66!")
 
                 elif cmd[1] == "emb":
-                    print("dsa")    
                     embed = discord.Embed(title="hallo", description="welt", url="https://euw.op.gg/summoner/userName=uffsayna")
                     await msg.channel.send(embed=embed)
 

@@ -4,6 +4,7 @@
 
 import logging
 from lolpros import getPlayer, findPlayers
+from riotAPI import findMainChampsChallenger
 
 def parse_Cmd(cmd):
 
@@ -18,7 +19,13 @@ def parse_Cmd(cmd):
         l = convertOpgg(opgg=cmd[2])
         return l
 
+    if cmd[1] == "top":
 
+        l = findMainChampsChallenger(playercount=int(cmd[2]), gamecount=int(cmd[3]))
+        return l
+
+    else:
+        return "command not found."
 
 def scoutPlayer(name):
     d = getPlayer(name)

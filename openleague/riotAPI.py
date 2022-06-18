@@ -47,23 +47,18 @@ def listChallengerPlayers():
     # limit for testing to 5
     return summonerNameList
 
-# 2 API calls per Name
-def findGames(summonerNameList):
+# 2 API calls
+def findGames(summonerName):
 
-    gameList = {}
-    for accName in summonerNameList:
+    # find puuid
+    d = requestsAPI(f"https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summonerName}?api_key={riot_key}")
+    puuid = d["puuid"]
 
-        # find puuid
-        d = requestsAPI(f"https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{accName}?api_key={riot_key}")
-        puuid = d["puuid"]
+    # get list of games
+    # here possible to add more games by adding more pages
+    games = requestsAPI(f"https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?queue=420&start=0&count=100&api_key={riot_key}")
 
-        # get list of games
-        # here possible to add more games by adding more pages
-        d = requestsAPI(f"https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?queue=420&start=0&count=100&api_key={riot_key}")
-
-        gameList[accName] = d
-
-    return gameList
+    return games
 
 # 1 API call, finds the champ which summonerName played
 def findChamp(matchID, summonerName):
@@ -81,18 +76,27 @@ def findChamp(matchID, summonerName):
 # Because of the API limit takes it: 1.2s * (2 + 2*playercount + playercount*gamecount)
 def findMainChampsChallenger(playercount, gamecount):
 
-    print(f"Requests time in seconds: {1.2*(2 + 2*playercount + playercount*gamecount)}")
-    print(f"Each player after ")
+    toplist = ""
+
+    starttime = time()
+    delayTime = 1.2*(2 + 2*playercount + playercount*gamecount)
+    #firstPlayerDelay = 1.2*(2 + 2 + gamecount)
+    logging.info(f"Lower Boundary for time: {delayTime:.1f}")
+    #print(f"Lower Boundary for first player: {firstPlayerDelay:.1f}\n")
 
     summonerNameList = listChallengerPlayers()[0:playercount]
-    gameList = findGames(summonerNameList)
 
-    for summonerName, games in gameList.items():
+    for summonerName in summonerNameList:
+
+        gamesList = findGames(summonerName)
+
         chamPool = []
-        for match in games[0:gamecount]:
-           chamPool.append(findChamp(match, summonerName))
 
-        print(f"{summonerName} played {Counter(chamPool).most_common()}")
- 
+        for match in gamesList[0:gamecount]:
+            chamPool.append(findChamp(match, summonerName))
 
-findMainChampsChallenger(3, 5)
+        toplist += f"{summonerName} plays {Counter(chamPool).most_common()[0:3]}\n"
+    logging.info(f"\nTotal time was: {time()-starttime:.2f}, so calculation time was: {(time()-starttime) - delayTime:.2f}")
+
+    return toplist[:-1]
+#findMainChampsChallenger(2, 3)
