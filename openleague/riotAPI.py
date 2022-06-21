@@ -9,17 +9,25 @@ from collections import Counter
 from cred import riot_key
 
 # generell requests
-def requestsAPI(url):
+def requestsAPI(url, retries=0):
     #print(f"Querrying API {url}")
 
     r = requests.get(url)
 
     if r.status_code == 403:
         logging.error("Refresh API key, returned none.")
-        return None
+        quit()
     elif r.status_code == 429:
         logging.error("Hit API limit, returned none.")
         return None
+
+    elif r.status_code == 500 or r.status_code == 503:
+        if retries > 3:
+            logging.error("Service unavailable, already tried 3 times.")
+            quit()
+        logging.error(f"Service unavailable, retry in 5s.{retries}")
+        sleep(5)
+        return requestsAPI(url, retries+1)
 
     data = r.json()
 
@@ -58,17 +66,24 @@ def findGames(summonerName):
     # here possible to add more games by adding more pages
     games = requestsAPI(f"https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?queue=420&start=0&count=100&api_key={riot_key}")
 
-    return games
+    return games, puuid
 
 # 1 API call, finds the champ which summonerName played
-def findChamp(matchID, summonerName):
+def findChamp(matchID, puuid):
     d = requestsAPI(f"https://europe.api.riotgames.com/lol/match/v5/matches/{matchID}?api_key={riot_key}")
 
+
+    try:
+        d["info"]
+    except KeyError as e:
+        logging.error(f"Keyerror: {e}\n d:{d}")
+        quit()
+
     for player in d["info"]["participants"]:
-        if summonerName == player["summonerName"]:
-            return player["championName"]
+        if puuid == player["puuid"]:
+            return player["championName"], d
     
-    logging.error("FindChamp failed, player was not in the game")
+    logging.error(f"FindChamp failed, player was not in the game.\nd: {d}\nmatchId: {matchID}\npuuid: {puuid}")
     return None
 
 # Finds the mostplayed champs by each player in challenger.
@@ -77,6 +92,7 @@ def findChamp(matchID, summonerName):
 def findMainChampsChallenger(playercount, gamecount):
 
     toplist = ""
+    identifyer = 0
 
     starttime = time()
     delayTime = 1.2*(2 + 2*playercount + playercount*gamecount)
@@ -86,17 +102,43 @@ def findMainChampsChallenger(playercount, gamecount):
 
     summonerNameList = listChallengerPlayers()[0:playercount]
 
+    know_matches = {}
     for summonerName in summonerNameList:
 
-        gamesList = findGames(summonerName)
+        gamesList, puuid = findGames(summonerName)
 
         chamPool = []
-
         for match in gamesList[0:gamecount]:
-            chamPool.append(findChamp(match, summonerName))
+            if match in know_matches:
+                logging.info("used caching")
+                d = know_matches[match]
+                
+                for player in d["info"]["participants"]:
+                    if puuid == player["puuid"]:
+                        chamPool.append(player["championName"])
+            else:    
+                res, answer = findChamp(match, puuid)
+                know_matches[match] = answer
+                chamPool.append(res)
 
-        toplist += f"{summonerName} plays {Counter(chamPool).most_common()[0:3]}\n"
+
+        identifyer += 1
+        champsSummed = Counter(chamPool).most_common()
+        toplist += f"{identifyer}\t{summonerName}\t{len(gamesList[0:gamecount])}"
+
+        if len(champsSummed) == 1:
+
+            toplist += f"\t{champsSummed[0][0]}\t{champsSummed[0][1]}\n" 
+            
+        if len(champsSummed) == 2:
+
+            toplist += f"\t{champsSummed[0][0]}\t{champsSummed[0][1]}\t{champsSummed[1][0]}\t{champsSummed[1][1]}\n" 
+        
+        if len(champsSummed) > 2:
+
+            toplist += f"\t{champsSummed[0][0]}\t{champsSummed[0][1]}\t{champsSummed[1][0]}\t{champsSummed[1][1]}\t{champsSummed[2][0]}\t{champsSummed[2][1]}\n" 
+
     logging.info(f"\nTotal time was: {time()-starttime:.2f}, so calculation time was: {(time()-starttime) - delayTime:.2f}")
 
     return toplist[:-1]
-#findMainChampsChallenger(2, 3)
+
