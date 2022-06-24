@@ -6,30 +6,41 @@ import json
 from time import time,sleep
 from collections import Counter
 
+from sqlTest import extract,insert
+
 from cred import riot_key
 
 # generell requests
 def requestsAPI(url, retries=0):
     #print(f"Querrying API {url}")
 
-    r = requests.get(url)
+    try:
+        r = requests.get(url)
 
-    if r.status_code == 403:
-        logging.error("Refresh API key, returned none.")
-        quit()
-    elif r.status_code == 429:
-        logging.error("Hit API limit, returned none.")
-        return None
-
-    elif r.status_code == 500 or r.status_code == 503:
-        if retries > 3:
-            logging.error("Service unavailable, already tried 3 times.")
+        if r.status_code == 403:
+            logging.error("Refresh API key, returned none.")
             quit()
-        logging.error(f"Service unavailable, retry in 5s.{retries}")
-        sleep(5)
+        elif r.status_code == 429:
+            logging.error("Hit API limit, returned none.")
+            return None
+
+        elif r.status_code == 500 or r.status_code == 503:
+            if retries > 3:
+                logging.error("Service unavailable, already tried 3 times.")
+                quit()
+            logging.error(f"Service unavailable, retry in 5s.{retries}")
+            sleep(5)
+            return requestsAPI(url, retries+1)
+
+        data = r.json()
+    except Exception as e:
+        print(f"FATAL ERROR with API. Retires: {retries}\n\n\nErrorMessage: {e}\n\n\nurl: {url}")
+        if retries > 3:
+            logging.error("Error 3 times, quitting.")
+            quit()
+        sleep(10)
         return requestsAPI(url, retries+1)
 
-    data = r.json()
 
     # to care for API limit
     sleep(1.2)
@@ -70,7 +81,13 @@ def findGames(summonerName):
 
 # 1 API call, finds the champ which summonerName played
 def findChamp(matchID, puuid):
-    d = requestsAPI(f"https://europe.api.riotgames.com/lol/match/v5/matches/{matchID}?api_key={riot_key}")
+
+    if extract("games", matchID):
+        logging.info("Found in Table")
+        d = extract("games", matchID)[0][1]
+    else:
+        d = requestsAPI(f"https://europe.api.riotgames.com/lol/match/v5/matches/{matchID}?api_key={riot_key}")
+        insert("games", matchID, d)
 
 
     try:
